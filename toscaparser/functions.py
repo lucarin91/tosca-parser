@@ -204,8 +204,10 @@ class GetAttribute(Function):
 
     def _find_node_template_containing_attribute(self):
         node_tpl = self._find_node_template(self.args[0])
+        print ('DEBUG: ', node_tpl)
         if node_tpl and \
-            not self._attribute_exists_in_type(node_tpl.type_definition):
+           not self._attribute_exists_in_type(node_tpl.type_definition) and \
+           not self._properties_exists_in_type(node_tpl.type_definition):
             ExceptionCollector.appendException(
                 KeyError(_('Attribute "%(att)s" was not found in node '
                            'template "%(ntpl)s".') %
@@ -215,9 +217,11 @@ class GetAttribute(Function):
 
     def _attribute_exists_in_type(self, type_definition):
         attrs_def = type_definition.get_attributes_def()
-        found = [attrs_def[self.attribute_name]] \
-            if self.attribute_name in attrs_def else []
-        return len(found) == 1
+        return self.attribute_name in attrs_def
+
+    def _properties_exists_in_type(self, type_definition):
+        props_def = type_definition.get_properties_def()
+        return self.attribute_name in props_def
 
     def _find_host_containing_attribute(self, node_template_name=SELF):
         node_template = self._find_node_template(node_template_name)
